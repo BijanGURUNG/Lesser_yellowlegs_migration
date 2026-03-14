@@ -34,7 +34,7 @@ for i in range(len(myValues)):
     where = "{0} = {1}".format(arcpy.AddFieldDelimiters(inFc, "tag_local_identifier"), myValues[i])   # use AddFieldDelimiters to avoid any issue with variables in SQL
     
     arcpy.conversion.ExportFeatures(inFc, inFc1, where)  # "Near" cannot be performed by selecting rows, so each bird has to be a seperate feature class
-    arcpy.analysis.Near(inFc1, inFc1, radius)            # apply the "Near" to each individual bird or a feature class
+    arcpy.analysis.Near(inFc1, inFc1, radius, method="GEODESIC")            # apply the "Near" to each individual bird or a feature class
     with arcpy.da.UpdateCursor(inFc1, ["NEAR_FID"]) as cursor:   # "Near" feature automatically generates two features: NEAR_FID and NEAR_DIST
         for row in cursor:
             if row[0] == -1:                             # NEAR_FID == -1 are the ones that are not within the search radius of any points
@@ -55,7 +55,6 @@ for i in delList:
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------
     
-
 # for i in range(len(myValues)):
 #     where = '"tag_local_identifier" = ' + "'" + myValues[i] + "'"
 #     arcpy.conversion.ExportFeatures(outFc, outFc + "_"+ myValues[i], where)
@@ -79,9 +78,9 @@ for i in delList:
 #     for row in cursor:
 #         print(f"Found record with {field_name}: {row[0]}")
 
-# with arcpy.da.SearchCursor(inFc, "tag_local_identifier", where_clause) as cursor:
+# with arcpy.da.SearchCursor(inFc, "tag_local_identifier", where) as cursor:
 #     for row in cursor:
-#         arcpy.analysis.Near(inFc, inFc, radius)
+#         arcpy.analysis.Near(inFc, inFc, radius, method="GEODESIC")
 
 # with arcpy.da.SearchCursor(inFc, "visible", where) as cursor:
 #     for row in cursor:

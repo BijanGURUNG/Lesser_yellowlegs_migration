@@ -26,7 +26,9 @@ with arcpy.da.SearchCursor(inFc, ["tag_local_identifier"]) as cursor:
 len(myValues)
 
 # define the search radius for "Near" geoprocessing tool
-radius = "30 Kilometers"
+radius = "30 Kilometers"    # input parameter as the search radius
+# days = 2     # input parameter as number of days 
+# days_hours = days * 24   # converted to hours 
 
 # the "Near" geoprocessing tool has to be applied individually to each bird
 for i in range(len(myValues)):
@@ -34,6 +36,28 @@ for i in range(len(myValues)):
     where = "{0} = {1}".format(arcpy.AddFieldDelimiters(inFc, "tag_local_identifier"), myValues[i])   # use AddFieldDelimiters to avoid any issue with variables in SQL
     
     arcpy.conversion.ExportFeatures(inFc, inFc1, where)  # "Near" cannot be performed by selecting rows, so each bird has to be a seperate feature class
+    
+    # arcpy.AddField_management(inFc1, "timestamps_diff", "FLOAT")   # Add a new field to calculate the time difference between consecutive points
+    
+    # prev_time = None
+    # with arcpy.da.UpdateCursor(inFc1, [["timestamp", "timestamps_diff"]]) as cursor:
+    #     for row in cursor:
+    #         current_time = row[0]
+        
+    #     if prev_time is not None and current_time is not None:
+    #         # Calculate difference in seconds 
+    #         delta = (current_time - prev_time).total_seconds()
+    #         row[1] = delta/3600       # convert it into hours
+    #         cursor.updateRow(row)
+        
+    #     prev_time = current_time
+
+    # where_clause = "{0} = {1}".format(arcpy.AddFieldDelimiters(inFc1, "timestamps_diff"), days_hours)
+    # with arcpy.da.UpdateCursor(inFc1, "timestamps_diff", where_clause) as cursor: 
+    #     for row in cursor:
+    #         if row[0] >= days_hours:
+    #             cursor.deleteRow()
+
     arcpy.analysis.Near(inFc1, inFc1, radius, method="GEODESIC")            # apply the "Near" to each individual bird or a feature class
     with arcpy.da.UpdateCursor(inFc1, ["NEAR_FID"]) as cursor:   # "Near" feature automatically generates two features: NEAR_FID and NEAR_DIST
         for row in cursor:
@@ -52,9 +76,46 @@ delList = arcpy.ListFeatureClasses("*temp*")
 for i in delList:
     arcpy.management.Delete(i)
     
-
 # ----------------------------------------------------------------------------------------------------------------------------------------------
     
+inFc2 = "USFWSLesserYellowlegs_migratory_XYTablePnt_1C_175323"
+
+prev_time = None
+
+with arcpy.da.UpdateCursor(inFc2, [["timestamp", "timestamps_diff"]]) as cursor:
+    for row in cursor:
+        current_time = row[0]
+        
+        if prev_time is not None and current_time is not None:
+            # Calculate difference in seconds 
+            delta = (current_time - prev_time).total_seconds()
+            row[1] = delta/3600       # convert it into hours
+            cursor.updateRow(row)
+        
+        prev_time = current_time
+
+86280/3600
+
+days = 2
+days_hours = days * 24
+
+expression = "{0} >= {1}".format(arcpy.AddFieldDelimiters(inFc2, "timestamps_diff"), days_hours)
+
+arcpy.management.SelectLayerByAttribute(inFc2, "NEW_SELECTION", expression)
+
+with arcpy.da.SearchCursor(inFc2, ["OBJECTID"]) as cursor:
+    for row in cursor:
+        target_id = row[0]
+        previous_id = target_id - 1
+        
+        # 3. Select current and previous point based on IDs
+        select_query = f"OBJECTID = {target_id} OR OBJECTID = {previous_id}"
+        arcpy.management.SelectLayerByAttribute(inFc2, "NEW_SELECTION", select_query)
+
+
+
+
+
 # for i in range(len(myValues)):
 #     where = '"tag_local_identifier" = ' + "'" + myValues[i] + "'"
 #     arcpy.conversion.ExportFeatures(outFc, outFc + "_"+ myValues[i], where)
@@ -90,3 +151,4 @@ for i in delList:
 # print(f"Fields in {os.path.basename(inFc)}:")
 # for field in fields:
 #     print(f"  Name: {field.name:<20} Type: {field.type:<15} Length: {field.length}")
+

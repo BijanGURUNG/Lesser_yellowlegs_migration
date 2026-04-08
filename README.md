@@ -7,6 +7,8 @@
 
 ### There are two Python files in this repository. 
 
-### 1. Cublic spline interpolation: This Python code applied the cublic spline function to smoothen the polylines, representing the flight tracks of Lesser yellowlegs. There are gaps in the recorded data because signal is lost at many places. These recorded data or points are used to generate polylines that represent the flight path of the bird.  
+### 1. Cublic spline interpolation: This Python code applied the cublic spline function to smoothen the polylines, representing the flight tracks of Lesser yellowlegs. There are gaps in the recorded data because GPS signal is lost at many places. These recorded data or points are used to generate polylines that represent the flight path of the bird. I applied the cublic spline function (with time as the parameter) to generate a smooth curve that resembles the flight path. 
+
+### 2. Identifying the fueling or resting sites: 
 
 

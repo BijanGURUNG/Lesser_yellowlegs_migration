@@ -5,6 +5,8 @@
 
 ### This rich datasets (Telemetry from GPS) can be applied to study the behavior of the birds, such as refueling sites, breeding sites, leading edge, and trailing edge. 
 
-There are two python files in this repository. 
+### There are two Python files in this repository. 
+
+### 1. Cublic spline interpolation: This Python code applied the cublic spline function to smoothen the polylines, representing the flight tracks of Lesser yellowlegs. There are gaps in the recorded data because signal is lost at many places. These recorded data or points are used to generate polylines that represent the flight path of the bird.  
 
 

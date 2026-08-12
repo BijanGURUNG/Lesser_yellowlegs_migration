@@ -27,7 +27,7 @@ plt.grid(True)
 plt.show()
 
 # cublic spline interpolation in the x-y coordinates
-df1 = pd.read_csv("C:/Users/bijan/OneDrive/Desktop/CCVA_ABM/Lesser_yellowlegs_monarch/USFWSLesserYellowlegs_migratory_Johnson_179737.csv")
+df1 = pd.read_csv("D:/CCVA_ABM/Lesser_yellowlegs_monarch/USFWSLesserYellowlegs_migratory_Johnson_179737.csv")
 type(df1)
 df1.head(20)
 df1.columns
@@ -88,7 +88,7 @@ df['unix_timestamp'] = df['datetime_col'].dt.timestamp()
 
 print(df)
 
-#---------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------
 # 1D interpolation for time-series data
 # Create sample time-series data with gaps
 data = pd.DataFrame({
@@ -121,12 +121,14 @@ plt.title('1D Cubic Spline for Time-Series Data')
 plt.legend()
 plt.show()
 
-#------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------
 # Using B-splines or Cubic Splines to interpolate the GPS points:
 
 import numpy as np
 from scipy.interpolate import splrep, splev
 import matplotlib.pyplot as plt
+
+df1 = pd.read_csv("D:/CCVA_ABM/Lesser_yellowlegs_monarch/USFWSLesserYellowlegs_migratory_Johnson_179737.csv")
 
 df1['location_lat'].isna().sum()      # check if there are any null values
 df1['location_long'].isna().sum()

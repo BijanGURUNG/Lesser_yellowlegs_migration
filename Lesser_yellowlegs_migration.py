@@ -6,7 +6,7 @@ Title - Selecting the multipoint feature class representing birds migration move
 
 __author__ = "Bijan GURUNG"
 __version__ = "1.0"
-__email__ = "bijangurung@ksu.edu"
+__email__ = "bijan.gurung-1@ou.edu"
 __status__ = "Production"
 
 # Import required module (s)
@@ -218,16 +218,20 @@ for i in range(len(myValues1)):
     if not target_oids:
         print("The list is empty for {0}".format(myValues1[i]))
     else:
-        selection_oids = []
-        for target_oid in target_oids:
-            # Get the previous point by subtracting 1 from the OID 
-            # (or adjust logic to use sequential date/time values if OIDs aren't contiguous)
-            previous_oid = target_oid - 1
-
-            selection_oids.extend([target_oid, previous_oid])
-
-        oid_string = ", ".join(str(oid) for oid in selection_oids)
+        oid_string = ", ".join(str(oid) for oid in target_oids)
         sql_expression = f"{oid_field} IN ({oid_string})"
+         
+        # Apply the following if we consider the preceding point of target point; remove the previous two lines of code
+        # selection_oids = []
+        # for target_oid in target_oids:
+        #     # Get the previous point by subtracting 1 from the OID 
+        #     # (or adjust logic to use sequential date/time values if OIDs aren't contiguous)
+        #     previous_oid = target_oid - 1
+
+        #     selection_oids.extend([target_oid, previous_oid])
+
+        # oid_string = ", ".join(str(oid) for oid in selection_oids)
+        # sql_expression = f"{oid_field} IN ({oid_string})"
 
         arcpy.management.SelectLayerByAttribute(
             in_layer_or_view=inFc3_A,
@@ -279,6 +283,7 @@ for i in delList1:
 #     arcpy.management.Delete(i)
 
 # ------------------------------------------------------------------------------------------------------------------
+# Parking lot 
 # select the points with "timestamps_diff" hours matching the above expression
 target_id = None
 with arcpy.da.SearchCursor(inFc2_layer, ["OBJECTID"], expression) as cursor:
